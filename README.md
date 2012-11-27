@@ -1,6 +1,6 @@
 # Tracks: a GTD(TM) web application, built with Ruby on Rails
 
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/TracksApp/tracks)
+[![Build Status](https://secure.travis-ci.org/TracksApp/tracks.png)](https://travis-ci.org/TracksApp/tracks) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/TracksApp/tracks)
 
 * Project homepage: http://getontracks.org/
 * Manual: http://getontracks.org/manual/
