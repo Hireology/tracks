@@ -1,1 +1,1 @@
-task :ci => ['db:migrate', :test]
+task :ci => ['db:test:prepare', :test]
