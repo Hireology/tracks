@@ -9,7 +9,6 @@ config/deploy.rb
 /db/*.sqlite3
 /db/*.db
 db/data.yml
-db/schema.rb
 /log/*.log
 nbproject
 /tmp
