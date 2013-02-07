@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_time_zone
   before_filter :set_zindex_counter
   before_filter :set_locale
-  prepend_before_filter :login_required
+  prepend_before_filter :authenticate_user!
   prepend_before_filter :enable_mobile_content_negotiation
   after_filter :set_charset
 
