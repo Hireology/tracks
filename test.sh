@@ -10,7 +10,7 @@ total=50
 for run in `seq $total`; do
     echo "Run $run/$total"
 
-    if ! bundle exec cucumber features/dependencies.feature:115; then
+    if ! bundle exec cucumber features/context_list.feature:106; then
         failures=$(($failures + 1))
     fi
 
