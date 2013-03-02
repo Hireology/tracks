@@ -10,7 +10,7 @@ before_install:
   - "cp config/site.yml.tmpl config/site.yml"
   - "cp config/database.yml.tmpl config/database.yml"
 
-script: "test.sh"
+script: "./test.sh"
 
 bundler_args: --without development
 notifications:
