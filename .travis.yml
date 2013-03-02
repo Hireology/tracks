@@ -6,8 +6,6 @@ env:
  - INSTANCE=1
  - INSTANCE=2
  - INSTANCE=3
- - INSTANCE=4
- - INSTANCE=5
 
 before_install:
   - "mysql -e 'create database tracks_test;'"
