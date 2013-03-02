@@ -5,7 +5,6 @@ rvm:
 env:
  - INSTANCE=1
  - INSTANCE=2
- - INSTANCE=3
 
 before_install:
   - "mysql -e 'create database tracks_test;'"

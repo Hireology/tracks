@@ -5,7 +5,7 @@ bundle exec rake db:migrate
 set -eu
 
 failures=0
-total=50
+total=25
 
 for run in `seq $total`; do
     echo "Run $run/$total"
