@@ -2,6 +2,12 @@ language: ruby
 rvm:
  - 1.9.3
  - 2.0.0
+env:
+ - INSTANCE=1
+ - INSTANCE=2
+ - INSTANCE=3
+ - INSTANCE=4
+ - INSTANCE=5
 
 before_install:
   - "mysql -e 'create database tracks_test;'"
