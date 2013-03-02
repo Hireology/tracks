@@ -108,8 +108,9 @@ end
 Then /^I should (see|not see) empty message for (active|hidden|closed) contexts$/ do |visible, state|
   box = "div##{state}-contexts-empty-nd"
 
-  elem = page.find(box)
-  elem.should_not be_nil
-
-  elem.send(visible=="see" ? "should" : "should_not", be_visible)
+  if visible=="see" do
+    page.find(box).should be_visible
+  else
+    page.find(box).should_not be_visible
+  end
 end
