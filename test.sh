@@ -1,4 +1,7 @@
 #!/bin/bash
+
+bundle exec rake db:migrate
+
 set -eu
 
 failures=0
