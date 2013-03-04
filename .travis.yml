@@ -11,6 +11,8 @@ before_install:
 
 script: "bundle exec rake ci"
 
+after_script: "mysqldump --no-data tracks_test"
+
 bundler_args: --without development
 notifications:
   email: false
