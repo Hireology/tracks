@@ -1,7 +1,6 @@
 language: ruby
 rvm:
  - 1.9.3
- - 2.0.0
 
 before_install:
   - "export DISPLAY=:99.0"
@@ -9,7 +8,7 @@ before_install:
   - "cp config/site.yml.tmpl config/site.yml"
   - "cp config/database.yml.tmpl config/database.yml"
 
-script: "bundle exec rake ci"
+script: "bundle exec rake db:setup"
 
 after_script: "mysqldump --no-data tracks_test"
 
