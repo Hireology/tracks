@@ -1,1 +1,1 @@
-task :ci => ['db:setup', :test, :cucumber]
+task :ci => ['db:setup', :test]

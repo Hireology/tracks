@@ -8,11 +8,11 @@ before_install:
   - "cp config/site.yml.tmpl config/site.yml"
   - "cp config/database.yml.tmpl config/database.yml"
 
-script: "bundle exec rake db:setup"
+script: "bundle exec rake ci"
 
 after_script: "mysqldump --no-data tracks_test"
 
-bundler_args: --without development assets test
+bundler_args: --without development assets
 notifications:
   email: false
 
