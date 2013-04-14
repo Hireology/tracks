@@ -2,6 +2,7 @@ class AddDeviseToUsers < ActiveRecord::Migration
   def self.up
     change_table(:users) do |t|
       ## Database authenticatable
+      t.change :login, :string, :limit => nil
       #t.string :email, :null => false, :default => ""
       #t.string :encrypted_password, :null => false, :default => ""
       t.rename :crypted_password, :encrypted_password
@@ -33,7 +34,7 @@ class AddDeviseToUsers < ActiveRecord::Migration
       # t.datetime :locked_at
 
       ## Token authenticatable
-      # t.string :authentication_token
+      t.string :authentication_token
 
 
       # Uncomment below if timestamps were not included in your original model.
@@ -56,6 +57,7 @@ class AddDeviseToUsers < ActiveRecord::Migration
   def self.down
     change_table(:users) do |t|
       ## Database authenticatable
+      t.change :login, :string, :limit => 80
       #t.string :email, :null => false, :default => ""
       #t.string :encrypted_password, :null => false, :default => ""
       t.change :encrypted_password, :string, :limit => 40
@@ -87,7 +89,7 @@ class AddDeviseToUsers < ActiveRecord::Migration
       # t.datetime :locked_at
 
       ## Token authenticatable
-      # t.string :authentication_token
+      t.remove :authentication_token
 
 
       # Uncomment below if timestamps were not included in your original model.

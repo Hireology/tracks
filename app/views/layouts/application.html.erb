@@ -18,9 +18,6 @@
       <% if current_user.prefs.refresh != 0 -%>
         setup_auto_refresh(<%= current_user.prefs["refresh"].to_i*60000 %>);
       <% end -%>
-      <% unless controller.controller_name == 'feed' or session['noexpiry'] == "on" -%>
-        setup_periodic_check("<%=url_for(:controller => "login", :action => "check_expiry")%>", 5*60);
-      <% end -%>
       setup_periodic_check("<%=check_deferred_todos_path(:format => 'js')%>", 10*60, 'POST');
       <%= generate_i18n_strings %>
     </script>
@@ -49,7 +46,7 @@
         &nbsp;|&nbsp;
 	       <%= link_to(t('layouts.toggle_notes'), "#", {:accesskey => "S", :title => t('layouts.toggle_notes_title'), :id => "toggle-notes-nav"}) %>
         &nbsp;|&nbsp;
-        <%= link_to("#{t('common.logout')} (#{current_user.display_name}) &raquo;".html_safe, logout_path) %>
+        <%= link_to("#{t('common.logout')} (#{current_user.display_name}) &raquo;".html_safe, destroy_user_session_path, :method => :delete) %>
       </div>
       <div id="navcontainer">
         <ul class="sf-menu">

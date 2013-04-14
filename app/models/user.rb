@@ -1,20 +1,14 @@
-require 'digest/sha1'
-require 'bcrypt'
-
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :token_authenticatable, :registerable, :rememberable, :trackable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
-  # Virtual attribute for the unencrypted password
-  attr_accessor :password
+  attr_accessible :login, :first_name, :last_name, :password_confirmation, :password, :remember_me
+  
   attr_protected :is_admin # don't allow mass-assignment for this
   
-  attr_accessible :login, :first_name, :last_name, :password_confirmation, :password, :auth_type, :open_id_url
   #for will_paginate plugin
   cattr_accessor :per_page
   @@per_page = 5
@@ -109,46 +103,26 @@ class User < ActiveRecord::Base
   has_one :preference, :dependent => :destroy
 
   validates_presence_of :login
-  validates_presence_of :password, :if => :password_required?
-  validates_length_of :password, :within => 5..40, :if => :password_required?
-  validates_presence_of :password_confirmation, :if => :password_required?
-  validates_confirmation_of :password
+  #validates_presence_of :password, :if => :password_required?
+  #validates_length_of :password, :within => 5..40, :if => :password_required?
+  #validates_presence_of :password_confirmation, :if => :password_required?
+  #validates_confirmation_of :password
   validates_length_of :login, :within => 3..80
   validates_uniqueness_of :login, :on => :create
-  validate :validate_auth_type
+  #validate :validate_auth_type
 
-  before_create :crypt_password, :generate_token
-  before_update :crypt_password
+  #before_create :crypt_password, :generate_token
+  #before_update :crypt_password
+  
+  after_create :create_preference
 
-  def validate_auth_type
-    unless Tracks::Config.auth_schemes.include?(auth_type)
-      errors.add("auth_type", "not a valid authentication type (#{auth_type})")
-    end
-  end
+  #def validate_auth_type
+  #  unless Tracks::Config.auth_schemes.include?(auth_type)
+  #    errors.add("auth_type", "not a valid authentication type (#{auth_type})")
+  #  end
+  #end
 
   alias_method :prefs, :preference
-
-  def self.authenticate(login, pass)
-    return nil if login.blank?
-    candidate = where("login = ?", login).first
-    return nil if candidate.nil?
-
-    if Tracks::Config.auth_schemes.include?('database')
-      return candidate if candidate.auth_type == 'database' and
-        candidate.password_matches? pass
-    end
-
-    if Tracks::Config.auth_schemes.include?('ldap')
-      return candidate if candidate.auth_type == 'ldap' && SimpleLdapAuthenticator.valid?(login, pass)
-    end
-
-    if Tracks::Config.auth_schemes.include?('cas')
-      # because we can not auth them with out thier real password we have to settle for this
-      return candidate if candidate.auth_type.eql?("cas")
-    end
-
-    return nil
-  end
 
   def self.no_users_yet?
     count == 0
@@ -173,12 +147,6 @@ class User < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
-  def change_password(pass,pass_confirm)
-    self.password = pass
-    self.password_confirmation = pass_confirm
-    save!
-  end
-
   def time
     Time.now.in_time_zone(prefs.time_zone)
   end
@@ -190,62 +158,20 @@ class User < ActiveRecord::Base
   def at_midnight(date)
     return ActiveSupport::TimeZone[prefs.time_zone].local(date.year, date.month, date.day, 0, 0, 0)
   end
-
-  def generate_token
-    self.token = Digest::SHA1.hexdigest "#{Time.now.to_i}#{rand}"
-  end
-
-  def remember_token?
-    remember_token_expires_at && Time.now.utc < remember_token_expires_at
-  end
-
-  # These create and unset the fields required for remembering users between browser closes
-  def remember_me
-    self.remember_token_expires_at = 2.weeks.from_now.utc
-    self.remember_token ||= Digest::SHA1.hexdigest("#{login}--#{remember_token_expires_at}")
-    save
-  end
-
-  def forget_me
-    self.remember_token_expires_at = nil
-    self.remember_token            = nil
-    save
-  end
-
-  # Returns true if the user has a password hashed using SHA-1.
-  def uses_deprecated_password?
-    crypted_password =~ /^[a-f0-9]{40}$/i
-  end
-
-  def password_matches?(pass)
-    if uses_deprecated_password?
-      crypted_password == sha1(pass)
-    else
-      BCrypt::Password.new(crypted_password) == pass
-    end
-  end
-
-  def salted(s)
-    "#{Tracks::Config.salt}--#{s}--"
-  end
-
-  def sha1(s)
-    Digest::SHA1.hexdigest(salted(s))
-  end
-
-  def create_hash(s)
-    BCrypt::Password.create(s)
+  
+  def token
+    self.authentication_token
   end
 
 protected
-
-  def crypt_password
-    return if password.blank?
-    write_attribute("crypted_password", self.create_hash(password)) if password == password_confirmation
-  end
-
-  def password_required?
-    auth_type == 'database' && crypted_password.blank? || !password.blank?
+  
+  def self.find_first_by_auth_conditions(warden_conditions)
+    conditions = warden_conditions.dup
+    if login = conditions.delete(:login)
+      where(conditions).where(["lower(login) = :value", { :value => login.downcase }]).first
+    else
+      where(conditions).first
+    end
   end
 
 end

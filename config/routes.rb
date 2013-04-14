@@ -1,14 +1,16 @@
 Tracksapp::Application.routes.draw do
-  devise_for :users
+  devise_for :users do
+    post 'refresh_token', :to => "users#refresh_token"
+  end
 
   mount Tolk::Engine => '/tolk', :as => 'tolk' if Rails.env=='development'
 
   root :to => 'todos#index'
   
-  match 'login' => 'login#login'
-  match 'login/expire_session' => 'login#expire_session'
-  match 'login/check_expiry' => 'login#check_expiry'
-  match 'logout' => 'login#logout'
+  #match 'login' => 'login#login'
+  #match 'login/expire_session' => 'login#expire_session'
+  #match 'login/check_expiry' => 'login#check_expiry'
+  #match 'logout' => 'login#logout'
   
   match "tickler" => "todos#list_deferred"
   match 'review' => "projects#review"
@@ -122,17 +124,17 @@ Tracksapp::Application.routes.draw do
     end
   end
   
-  resources :users do
-    member do
-      get 'change_password'
-      get 'change_auth_type'
-      get 'complete'
-      post 'update_password'
-      post 'update_auth_type'
-      post 'refresh_token'
-    end
-  end
-  match 'signup' => "users#new"
+  #resources :users do
+  #  member do
+  #    get 'change_password'
+  #    get 'change_auth_type'
+  #    get 'complete'
+  #    post 'update_password'
+  #    post 'update_auth_type'
+  #    post 'refresh_token'
+  #  end
+  #end
+  #match 'signup' => "users#new"
   
   resources :notes
   resources :preferences

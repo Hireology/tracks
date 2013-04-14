@@ -18,7 +18,7 @@ gem "htmlentities"
 gem "swf_fu"
 gem "rails_autolink"
 gem "cache_digests"
-gem "rack-mini-profiler"
+#gem "rack-mini-profiler"
 gem "devise"
 
 # Gems used only for assets and not required

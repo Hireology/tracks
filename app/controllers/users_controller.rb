@@ -1,10 +1,6 @@
 class UsersController < ApplicationController
   
   before_filter :admin_login_required, :only => [ :index, :show, :destroy ]
-  skip_before_filter :login_required, :only => [ :new, :create ]
-  skip_before_filter :check_for_deprecated_password_hash,
-    :only => [ :change_password, :update_password ]
-  prepend_before_filter :login_optional, :only => [ :new, :create ]
 
   # GET /users GET /users.xml
   def index
@@ -29,16 +25,10 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     render :xml => @user.to_xml(:except => [ :password ])
   end
-
+end
+class BogusUsersController
   # GET /users/new
   def new
-    @auth_types = []
-    unless session[:cas_user]
-      Tracks::Config.auth_schemes.each {|auth| @auth_types << [auth,auth]}
-    else
-      @auth_types << ['cas','cas']
-    end
-
     if User.no_users_yet?
       @page_title = t('users.first_user_title')
       @heading = t('users.first_user_heading')
@@ -78,26 +68,6 @@ class UsersController < ApplicationController
         end
 
         user = User.new(params['user'])
-
-        if Tracks::Config.auth_schemes.include?('ldap') &&
-            user.auth_type == 'ldap' &&
-            !SimpleLdapAuthenticator.valid?(user.login, params['user']['password'])
-          notify :warning, "Incorrect password"
-          redirect_to signup_path
-          return
-        end
-
-        if Tracks::Config.auth_schemes.include?('cas')
-          if user.auth_type.eql? "cas"
-             user.crypted_password = "cas"
-          end
-        end
-
-        unless user.valid?
-          session['new_user'] = user
-          redirect_to signup_path
-          return
-        end
 
         signup_by_admin = true if (@user && @user.is_admin?)
         first_user_signing_up = User.no_users_yet?

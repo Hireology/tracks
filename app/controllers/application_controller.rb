@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   include LoginSystem
   helper_method :current_user, :prefs, :format_date, :markdown
 
-  layout proc{ |controller| controller.mobile? ? "mobile" : "application" }
+  layout proc{ |controller| controller.mobile? ? "mobile" : layout_by_resource }
   # exempt_from_layout /\.js\.erb$/
 
   before_filter :set_session_expiration
@@ -276,6 +276,14 @@ class ApplicationController < ActionController::Base
   def set_zindex_counter
     # this counter can be used to handle the IE z-index bug
     @z_index_counter = 500
+  end
+
+  def layout_by_resource
+    if devise_controller?
+      "login"
+    else
+      "application"
+    end
   end
 
 end

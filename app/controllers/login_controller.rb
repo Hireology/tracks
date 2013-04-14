@@ -1,5 +1,7 @@
 class LoginController < ApplicationController
-  
+end
+
+class DummyLoginController < ApplicationController  
   layout 'login'
   skip_before_filter :set_session_expiration
   skip_before_filter :login_required

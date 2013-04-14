@@ -1,18 +1,33 @@
-<h2>Sign up</h2>
-
+<div title="<%= t('users.account_signup') %>" id="signupform" class="form">
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, :autofocus => true %></div>
+  <%= devise_error_messages! %><br/>
 
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
+  <%= render_flash %>
+	
+  <h3><%= @heading -%></h3>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
-
-  <div><%= f.submit "Sign up" %></div>
+  <table>
+    <tr>
+      <td><%= f.label :login, t('users.desired_login') %>:</td>
+      <td><%= f.text_field :login, :autofocus => true, :size => 20 %></td>
+    </tr>
+		<tr>
+      <td><%= f.label :password, t('users.choose_password') %>:</label></td>
+	    <td><%= f.password_field :password, :size => 20 %></td>
+	  </tr>
+	  <tr>
+	    <td><%= f.label :password_confirmation, t('users.confirm_password') %>:</td>
+	    <td><%= f.password_field :password_confirmation, :size => 20 %></td>
+	  </tr>
+    <tr>
+      <td></td>
+      <td><%= f.submit t('users.signup'), :class => :primary %></td>
+    </tr>
+  </table>
 <% end %>
 
 <%= render "devise/shared/links" %>
+</div>
+
+

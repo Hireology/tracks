@@ -2,10 +2,6 @@ require_dependency "user"
 
 module LoginSystem
 
-  def current_user
-    get_current_user
-  end
-
   def prefs
     current_user.prefs unless current_user.nil?
   end
@@ -136,7 +132,7 @@ module LoginSystem
   end
   
   def logged_in?
-    current_user != nil
+    user_signed_in?
   end
   
   def get_current_user
